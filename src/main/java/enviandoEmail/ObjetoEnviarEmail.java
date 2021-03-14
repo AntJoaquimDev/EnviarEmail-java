@@ -11,15 +11,16 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class ObjetoEnviarEmail {
     private String userName = "abcjavatesteemail2021@gmail.com";
-    private String senha = "********";
+    private String senha = "*******";
     private String listaDestinatarios = "";
     private String nomeRemetente = "";
     private String assuntEmail = "";
@@ -61,9 +62,9 @@ public class ObjetoEnviarEmail {
             message.setFrom(new InternetAddress(userName, nomeRemetente)); /* quem esta enviando e apelido*/
             message.setRecipients(Message.RecipientType.TO, toUser); /*Email de destino*/
             message.setSubject(assuntEmail);/*Assunto do email enviando*/
-            if(envioHtml){//verificar se o texto é html
-                message.setContent(textoEmail,"text/html; charset=utf-8");
-            }else {
+            if (envioHtml) {//verificar se o texto é html
+                message.setContent(textoEmail, "text/html; charset=utf-8");
+            } else {
                 message.setText(textoEmail); /*texto do email*/
             }
             Transport.send(message);
@@ -106,27 +107,35 @@ public class ObjetoEnviarEmail {
 
             /*Parte 1 do Email: q é o texto e descrição do e-mail.*/
 
-           MimeBodyPart corpoEmail = new MimeBodyPart();
-            if(envioHtml){//verificar se o texto é html
-                corpoEmail.setContent(textoEmail,"text/html; charset=utf-8");
-            }else {
-               corpoEmail.setText(textoEmail); /*texto do email*/
+            MimeBodyPart corpoEmail = new MimeBodyPart();
+            if (envioHtml) {//verificar se o texto é html
+                corpoEmail.setContent(textoEmail, "text/html; charset=utf-8");
+            } else {
+                corpoEmail.setText(textoEmail); /*texto do email*/
             }
-            /*Parte 2 do Email arquivos pdf e outros*/
 
-            MimeBodyPart anexoEmail = new MimeBodyPart();
-            /*onde é passado o simulador d PDF você passa o arquivo do banco de dados*/
-            anexoEmail.setDataHandler(new DataHandler(new ByteArrayDataSource(simuladorPDF(),"application/pdf")));
-            anexoEmail.setFileName("anexoemail.pdf");
+            List<FileInputStream> arquivo = new ArrayList<FileInputStream>();
+            arquivo.add(simuladorPDF()); // arquivo.pdf
+            arquivo.add(simuladorPDF());// certificado
+            arquivo.add(simuladorPDF());// outros nota fiscal, texto,img etc.
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(corpoEmail); //juntar as partes dddo email
-            multipart.addBodyPart(anexoEmail);
+
+            int index =0;
+            for (FileInputStream fileInputStream : arquivo) {
+                /*Parte 2 do Email arquivos pdf e outros*/
+                MimeBodyPart anexoEmail = new MimeBodyPart();
+                /*onde é passado o simulador d PDF você passa o arquivo do banco de dados*/
+                anexoEmail.setDataHandler(new DataHandler(new ByteArrayDataSource(fileInputStream, "application/pdf")));
+                anexoEmail.setFileName("anexoemail"+index+".pdf");
+
+                multipart.addBodyPart(anexoEmail);
+                index++;
+            }
             message.setContent(multipart);
 
-
             Transport.send(message);
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,11 +148,11 @@ public class ObjetoEnviarEmail {
      * podendo pegar do banco de dados base64,byte[],stream de arquivos.
      * */
 
-    private FileInputStream simuladorPDF()throws Exception{
+    private FileInputStream simuladorPDF() throws Exception {
         Document document = new Document();
         File file = new File("fileanexo.pdf");
         file.createNewFile();
-        PdfWriter.getInstance(document,new FileOutputStream(file));
+        PdfWriter.getInstance(document, new FileOutputStream(file));
         document.open();
         document.add(new Paragraph("Conteudo do PDF anexo com java Mail. esse texto é do pdf"));
         document.close();
