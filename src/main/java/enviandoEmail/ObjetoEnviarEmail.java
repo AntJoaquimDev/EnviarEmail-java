@@ -18,8 +18,8 @@ import java.io.FileOutputStream;
 import java.util.Properties;
 
 public class ObjetoEnviarEmail {
-    private String userName = "javatesteemail2021@gmail.com";
-    private String senha = "zara1981";
+    private String userName = "abcjavatesteemail2021@gmail.com";
+    private String senha = "********";
     private String listaDestinatarios = "";
     private String nomeRemetente = "";
     private String assuntEmail = "";
