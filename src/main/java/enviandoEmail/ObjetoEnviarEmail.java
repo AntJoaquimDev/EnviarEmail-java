@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class ObjetoEnviarEmail {
-    private String userName = "abcjavatesteemail2021@gmail.com";
+    private String userName = "seuEmaildeEnviou@gmail.com";
     private String senha = "*******";
     private String listaDestinatarios = "";
     private String nomeRemetente = "";
@@ -33,10 +33,7 @@ public class ObjetoEnviarEmail {
         this.textoEmail = textoEmail;
     }
 
-    public void EnviarEmail(boolean envioHtml) {
-        /* olhar config do smt do Email
-         *usando Gmail. --> javatesteemail2021@gmail.com senha--> zara1981
-         */
+    public void EnviarEmail(boolean envioHtml) {    
 
         try {
             Properties properties = new Properties();
